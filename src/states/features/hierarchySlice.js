@@ -27,11 +27,43 @@ export const fetchHierarchyData = createAsyncThunk(
       )
       
       const basicData = response.data
-      return basicData.data // Return the data object containing companies, divisions, branches, departments
+      return basicData.data 
       
     } catch (error) {
-      
       return rejectWithValue(error.response?.data?.message || "Failed to fetch hierarchy data")
+    }
+  }
+)
+
+export const fetchEmployeeData = createAsyncThunk(
+  'hierarchy/fetchEmployeeData',
+  async (formData, { getState, rejectWithValue }) => {
+    const { config } = getState().config
+    const { apiUrl, username, password } = config
+    
+    if (!apiUrl || !username || !password) {
+      return rejectWithValue("Missing environment variables")
+    }
+    
+    try {
+      const axiosConfig = {
+        auth: {
+          username: username,
+          password: password
+        }
+      }
+      
+      const response = await axios.post(
+        `${apiUrl}/api/common_basic_details/getEmployee`, 
+        formData, 
+        axiosConfig
+      )
+      
+      const basicData = response.data
+      return basicData.data 
+      
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch employee data")
     }
   }
 )
@@ -41,6 +73,8 @@ const initialState = {
   branchDetails: [],
   divDetails: [],
   deptDetails: [],
+  employeeData: null,
+  employeeLoading: false,
   loading: false,
   errors: {}
 }
@@ -66,6 +100,10 @@ const hierarchySlice = createSlice({
     },
     setError: (state, action) => {
       state.errors = { ...state.errors, ...action.payload }
+    },
+    clearEmployeeData: (state) => {
+      state.employeeData = null
+      state.errors.employee = null
     }
   },
   extraReducers: (builder) => {
@@ -90,6 +128,19 @@ const hierarchySlice = createSlice({
         state.loading = false
         state.errors.hierarchy = action.payload
       })
+      .addCase(fetchEmployeeData.pending, (state) => {
+        state.employeeLoading = true
+        state.errors.employee = null
+      })
+      .addCase(fetchEmployeeData.fulfilled, (state, action) => {
+        state.employeeLoading = false
+        state.employeeData = action.payload
+      })
+      .addCase(fetchEmployeeData.rejected, (state, action) => {
+        state.employeeLoading = false
+        state.errors.employee = action.payload
+        state.employeeData = null
+      })
   }
 })
 
@@ -101,7 +152,8 @@ export const {
   setDivDetails,  
   setDeptDetails,
   clearErrors,
-  setError
+  setError,
+  clearEmployeeData
 } = hierarchySlice.actions
 
 // Export selectors
@@ -111,5 +163,7 @@ export const selectDivDetails = (state) => state.hierarchy.divDetails
 export const selectDeptDetails = (state) => state.hierarchy.deptDetails
 export const selectHierarchyLoading = (state) => state.hierarchy.loading
 export const selectHierarchyErrors = (state) => state.hierarchy.errors
+export const selectEmployeeData = (state) => state.hierarchy.employeeData
+export const selectEmployeeLoading = (state) => state.hierarchy.employeeLoading
 
 export default hierarchySlice.reducer

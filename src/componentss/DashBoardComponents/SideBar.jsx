@@ -1,85 +1,8 @@
-
-
-const SpaceIcon = ({ className }) => (
-  <svg 
-    className={`space-icon ${className}`}
-    width="24" 
-    height="24"
-    viewBox="0 0 100 100" 
-    fill="none"
-  >
-    <style jsx>{`
-      .space-icon {
-        animation: rotate 3s linear infinite;
-      }
-      
-      @keyframes rotate {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    `}</style>
-    
-    <defs>
-      <linearGradient id="sGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#4fc3f7" />
-        <stop offset="100%" stopColor="#1e88e5" />
-      </linearGradient>
-    </defs>
-    
-    {/* Main sphere */}
-    <circle 
-      cx="50" 
-      cy="50" 
-      r="45" 
-      fill="url(#sGradient)"
-      stroke="rgba(255,255,255,0.2)"
-      strokeWidth="2"
-    />
-    
-    {/* Enhanced 3D highlight */}
-    <ellipse 
-      cx="38" 
-      cy="32" 
-      rx="18" 
-      ry="12" 
-      fill="rgba(255,255,255,0.5)"
-      transform="rotate(-30 38 32)"
-    />
-    
-    {/* More visible S path with better contrast */}
-    <path 
-      d="M22 28h18c6.6 0 12 5.4 12 12s-5.4 12-12 12H32c-6.6 0-12 5.4-12 12s5.4 12 12 12h18" 
-      stroke="white" 
-      strokeWidth="6"
-      strokeLinecap="round" 
-      fill="none"
-      style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))' }}
-    />
-    
-    {/* Subtle outer glow for better visibility */}
-    <circle 
-      cx="50" 
-      cy="50" 
-      r="47" 
-      fill="none"
-      stroke="rgba(79,195,247,0.3)"
-      strokeWidth="1"
-    />
-  </svg>
-);
-
-
-// Usage
-
 import { useState,  useRef, useEffect } from "react";
 import { 
   Home, X, LogOut, BarChart3, Users, ShoppingCart, Calendar, Settings, 
   ChevronDown, ChevronRight, Menu, Building2, GitBranch, Network, 
-  FileText, ShieldCheck, Package, Globe, Search, Bell, User
+  FileText, ShieldCheck, Package, Globe, Search, Bell, User, DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -92,29 +15,18 @@ import { useAppState } from "@/states/hooks/useAppState";
 const Sidebar = () => {
   const [isResizing, setIsResizing] = useState(false);
 
-  const { 
-    sidebarOpen, 
-    setSidebarOpen, 
-    expandedItems, 
-    setExpandedItems, 
-    activeItem,
-    setActiveItem, 
-    activeComponent, 
-    setActiveComponent, 
-    sidebarWidth, 
-    setSidebarWidth,
-    isCollapsed,   
-    setIsCollapsed,    
-    toggleCollapse,    
-    setHeaderComponentRender  
-  } = useAppState();
+  const {sidebarOpen, setSidebarOpen, expandedItems, setExpandedItems, activeItem,setActiveItem, 
+    activeComponent, setActiveComponent, sidebarWidth, setSidebarWidth, isCollapsed, setIsCollapsed, 
+    toggleCollapse, setHeaderComponentRender } = useAppState();
 
-  const menuItems = [
+  
+    const menuItems = [
     { icon: Home, label: "Masters", id: "masters" },
     { icon: BarChart3, label: "Purchase Requisition", id: "PurRequisitionForm" },
     { icon: Globe, label: "Hod Approval", id: "HodApproval" },
     { icon: Users, label: "Requisition Approval", id: "PurchaseApproval" },
     { icon: ShieldCheck, label: "Requisition Authorization", id: "PurReqAuthorization" },
+    { icon: DollarSign, label: "Budget Request", id: "BudgetRequest" },
   ];
 
   const toggleExpanded = (itemId) => {
@@ -325,7 +237,7 @@ const Sidebar = () => {
           </ScrollArea>
 
           {/* Footer */}
-          <div className="p-2 border-t border-border/50 bg-background/50 backdrop-blur-sm">
+          {/* <div className="p-2 border-t border-border/50 bg-background/50 backdrop-blur-sm">
             {!isCollapsed ? (
               <div className="space-y-2">
                
@@ -372,7 +284,7 @@ const Sidebar = () => {
                 </Tooltip>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Resize Handle */}
           {!isCollapsed && (

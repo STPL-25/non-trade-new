@@ -21,10 +21,15 @@ import {selectConfig} from '../features/configSlice'
 import { setSearchTerm, setSelectedCategory, setViewMode, setCurrentScreen, setSelectedMaster,
          selectMasterData,selectSearchTerm,selectCurrentScreen,selectSelectedCategory,selectViewMode,
          selectSelectedMaster} from '../features/masterSlice'
+import { decryptData, clearDecryptedData, clearError ,selectDecryptedData,selectIsLoading,selectError,selectUserData,setUserData} from '../features/decodeSlice'
+
+
+
          
 export const useAppState = () => {
   const dispatch = useDispatch()
   
+
   // Selectors
   const ui = {
     sidebarOpen: useSelector(selectSidebarOpen),
@@ -59,6 +64,12 @@ export const useAppState = () => {
   }
 
   const config = useSelector(selectConfig)
+  const decode = {
+    decryptedData: useSelector(selectDecryptedData),
+    isLoading: useSelector(selectIsLoading),
+    error: useSelector(selectError),
+    userData: useSelector(selectUserData)
+  }
   
   useEffect(() => {
     if (form.formData !== null) {
@@ -71,6 +82,7 @@ export const useAppState = () => {
     ...hierarchy,
     ...form,
     ...master,
+    ...decode,
     config,
     
     // UI Actions
@@ -105,6 +117,12 @@ export const useAppState = () => {
 
     // Async Actions
     fetchHierarchyData: (data) => dispatch(fetchHierarchyData(data)),
+
+    // Decode Actions
+    decryptData: (payload) => dispatch(decryptData(payload)),
+    clearDecryptedData: () => dispatch(clearDecryptedData()),
+    clearDecodeError: () => dispatch(clearError()),
+    setUserData: (data) => dispatch(setUserData(data))
 
   }
 }

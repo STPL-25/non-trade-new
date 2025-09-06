@@ -4,52 +4,25 @@ import { useSignUpFields } from "../Data/SignUpData";
 import stplimage from "../assets/stpllogo.png";
 import { CustomInputField } from "@/componentss/AdditionalComponent/CustomInputField";
 import { useAppState } from "@/states/hooks/useAppState";
-import { useEffect } from "react";
-import axios from "axios";
+import ECNOInputWithLookup from ".././componentss/AdditionalComponent/ECNOInputWithLookup";
+import usePost from "@/hooks/usePostHook";
+import { toast } from "sonner";
+
 export default function SignUp() {
   const navigate = useNavigate();
   const signUpFields = useSignUpFields();
-  const { formData, setFormData } = useAppState(); 
-
-
-// useEffect(() => {
-//   const fetchBasicData = async () => {
-//     try {
-//       const axiosConfig = {
-//           auth: {
-//             username: config.username,
-//             password: config.password
-//           }
-//         };
-
-//       const response = await axios.post(`${config.apiUrl}/api/common_basic_details`, formData, axiosConfig);
-//       const basicData = response.data;
-//       const { companies, divisions, branches, departments } = basicData.data;
-//       setCompanyDetails(companies);
-//       setDivDetails(divisions);
-//       setBranchDetails(branches);
-//       setDeptDetails(departments);
-//     } catch (error) {
-//       console.error("Error fetching basic data:", error);
-//       console.error("Error response:", error.response?.data);
-//       console.error("Error status:", error.response?.status);
-//     } 
-//   };
-  
-//     fetchBasicData();
-  
-// }, []); 
-
+  const { formData, setFormData } = useAppState();
+  const {  postData } = usePost();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleInputChange = (field, value) => {
-
     const fieldDef = signUpFields.find((f) => f.field === field);
-    
-    if (fieldDef && fieldDef.type === "select" && typeof value === "string") {
+   console.log(fieldDef)
+    if (fieldDef && fieldDef.type === "select" ) {
       const selectedOption = fieldDef.options.find((opt) => opt.value == value);
       const updatedFormData = {
         ...formData,
-        [field]: selectedOption,
+        [field]: selectedOption.value,
       };
       setFormData(updatedFormData);
     } else {
@@ -60,13 +33,64 @@ export default function SignUp() {
       setFormData(updatedFormData);
     }
   };
-  console.log(formData);
-  const handleSubmit = (e) => {
-    navigate("/");
-  };
-const handleSendOTP=async () => { 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await postData(`${apiUrl}/api/secure/sign_up`, formData);
+      if (response?.success) {
+        toast.success(response?.message);
+        setFormData({});
+        setTimeout(() => {
+          navigate("/");
+        }, 6000);
+      }
+    }
+    catch (error) {
+      console.error("Error submitting form data:", error);
+      setFormData({});
 
-}
+      toast.error(error?.response?.data?.error || "Failed to submit form");
+    } 
+    
+  };
+
+  const handleSendOTP = async () => {
+    // Your OTP logic here
+  };
+
+  const renderInputField = (fieldDef) => {
+    if (fieldDef.field === "ecno") {
+      return (
+        <ECNOInputWithLookup
+          key={fieldDef.field}
+          field={fieldDef.field}
+          label={fieldDef.label}
+          required={fieldDef.require !== false}
+          type={fieldDef.type || "text"}
+          placeholder={fieldDef.placeholder}
+          value={formData ? formData[fieldDef.field] || "" : ""}
+          maxLength={fieldDef?.maxLength}
+          onChange={(val) => handleInputChange(fieldDef.field, val)}
+        />
+      );
+    }
+
+    return (
+      <CustomInputField
+        key={fieldDef.field}
+        field={fieldDef.field}
+        label={fieldDef.label}
+        required={fieldDef.require !== false}
+        type={fieldDef.type || "text"}
+        placeholder={fieldDef.placeholder}
+        options={fieldDef.options || []}
+        value={formData ? formData[fieldDef.field] || "" : ""}
+        maxLength={fieldDef?.maxLength}
+        onChange={(val) => handleInputChange(fieldDef.field, val)}
+      />
+    );
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-blue-600 p-4">
       <div className="w-full max-w-6xl rounded-lg bg-white shadow-2xl flex overflow-hidden">
@@ -85,39 +109,31 @@ const handleSendOTP=async () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
 
             <form onSubmit={handleSubmit} className="space-y-2">
-              {signUpFields.map((fieldDef) => (
-                <CustomInputField
-                  key={fieldDef.field}
-                  field={fieldDef.field}
-                  label={fieldDef.label}
-                  required={fieldDef.require !== false}
-                  type={fieldDef.type || "text"}
-                  placeholder={fieldDef.placeholder}
-                  options={fieldDef.options || []}
-                  value={formData ? formData[fieldDef.field] || "" : ""}
-                  maxLength={fieldDef?.maxLength }
-                  onChange={(val) => handleInputChange(fieldDef.field, val)}
-                />
-              ))}
+              {signUpFields.map((fieldDef) => renderInputField(fieldDef))}
 
               {/* Submit Button */}
-               <Button 
+              {/* <Button 
                 type="button"
                 onClick={() => handleSendOTP()}
                 className="w-full bg-green-800 hover:bg-green-600 py-3 text-white font-medium"
               >
                 Send OTP
-              </Button>
-              <Button 
+              </Button> */}
+
+               <Button
                 type="submit"
-                className="w-full bg-blue-900 hover:bg-blue-800 py-3 text-white font-medium"
+                className="w-full bg-blue-900 hover:bg-blue-800 py-3 text-white font-medium "
               >
                 Create Account
               </Button>
+              
 
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{" "}
-                <Link  to="/" className="font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+                <Link
+                  to="/"
+                  className="font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                >
                   Sign in
                 </Link>
               </p>

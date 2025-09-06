@@ -106,12 +106,7 @@ const PurchaseRequisitionApproval = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-full mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Purchase Requisition Approval</h1>
-          <p className="text-gray-600">Review and approve pending purchase requisitions</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Requisitions List */}
           <div className="lg:col-span-1">
             <Card>

@@ -78,12 +78,7 @@ const SingleItemForm = ({
               </div>
             </div>
 
-            {/* {currentItem.supplier && (
-              <SupplierDetails 
-                supplier={currentItem.supplier}
-                onRemove={removeSupplierFromItem}
-              />
-            )} */}
+            
               {console.log(currentItem)}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {fields.map((field,index) => (
@@ -100,13 +95,7 @@ const SingleItemForm = ({
                     const value = e?.target?.value !== undefined ? e.target.value : e;
                     handleChange(field.field, value);
                   }}
-                  // error={errors[field.field]}
-                  // disabled={isLoading}
-                  // key={index}
-                  // field={field}
-                  // value={currentItem[field.name] || ""}
-                  // onChange={(value) => handleChange(currentItem.id, field.name, value)}
-                  // id={`current-${field.name}`}
+                
                 />
               ))}
             </div>

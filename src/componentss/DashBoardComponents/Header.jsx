@@ -1,44 +1,16 @@
-
-
-
 import React from "react";
-import {
-  ChevronDown,
-  Menu,
-  Search,
-  Bell,
-  X,
-  Minimize2,
-  Maximize2,
-  Eye,
-  EyeOff,
-  Settings,
-  User,
-} from "lucide-react";
+import {  ChevronDown,  Menu,  Search,  Bell,  X,  Minimize2,  Maximize2,  Eye,  EyeOff,  Settings,  User, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useAppState } from "@/states/hooks/useAppState";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import stpllogo from '../../assets/stpllogo1.png';
+import {DropdownMenu,  DropdownMenuContent,  DropdownMenuItem,  DropdownMenuLabel,  DropdownMenuSeparator,  DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 const Header = () => {
-  const {
-    sidebarOpen,
-    setSidebarOpen,
+  const { sidebarOpen, setSidebarOpen, headerComponentRender, isFullscreen, setIsFullscreen, userData ,setUserData} = useAppState();
 
-    headerComponentRender,
-    isFullscreen,
-    setIsFullscreen,
-  
-  } = useAppState();
+  const navigate = useNavigate();
 
   const handleFullscreenToggle = () => {
     if (!isFullscreen) {
@@ -67,7 +39,26 @@ const Header = () => {
   const handleMobileMenuToggle = () => {
     setSidebarOpen(!sidebarOpen);
   };
+const handleSignOut = async () => {
+  try {
+    // Clear user data from state
+    setUserData(null);
+    
+    // Clear localStorage
+    localStorage.removeItem('userToken');
+    
+    // Navigate to login page
+    navigate('/');
+    
+    // Optional: Show success message
+    toast.success('Signed out successfully');
+  } catch (error) {
+    console.error('Sign out error:', error);
+    toast.error('Failed to sign out');
+  }
+};
 
+  console.log(userData);
   return (
     <header
       className={`bg-background/50 backdrop-blur-md shadow-sm border-b border-border/50 px-5 lg:px-8 py-3 transition-all duration-300 ${
@@ -177,10 +168,10 @@ const Header = () => {
                 <div className="flex items-center space-x-2">
                   <Avatar className="h-7 w-7 ring-2 ring-border/50">
                     <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs">
-                      TU
+                      {userData[0]?.ename ? userData[0]?.ename.charAt(0) : "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden lg:block text-sm font-medium">Test User</span>
+                  <span className="hidden lg:block text-sm font-medium">{userData[0]?.ename}</span>
                   <ChevronDown className="hidden lg:block w-3 h-3 text-muted-foreground" />
                 </div>
               </Button>
@@ -191,7 +182,7 @@ const Header = () => {
             >
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">Test User</p>
+                  <p className="text-sm font-medium">{userData[0]?.ename}</p>
                   {/* <p className="text-xs text-muted-foreground">admin@company.com</p> */}
                 </div>
               </DropdownMenuLabel>
@@ -206,7 +197,7 @@ const Header = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
-                <span>Sign out</span>
+                <Button onClick={handleSignOut}>Sign out</Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

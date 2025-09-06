@@ -6,11 +6,21 @@ import { useNavigate, Link } from "react-router-dom";
 import stplimage from "../assets/stpllogo.png";
 import { CustomInputField } from "@/componentss/AdditionalComponent/CustomInputField";
 import { useLoginFields } from "@/Data/SignUpData";
+import { useAppState } from "@/states/hooks/useAppState";
+import usePost from "@/hooks/usePostHook";
+import { toast } from "sonner";
+
+const apiUrl = import.meta.env.VITE_API_URL;
+const cryptoSecret = import.meta.env.VITE_CRYPTO_SECRET;
+
 export default function SignIn() {
   const loginFields = useLoginFields();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const { postData } = usePost();
+  const { decryptData, clearDecryptedData, clearDecodeError, userData } = useAppState();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ 
@@ -18,17 +28,51 @@ export default function SignIn() {
       [field]: value 
     }));
   };
+console.log(userData)
+const handleSignIn = async (e) => {
+  e.preventDefault();
+  setIsSigningIn(true);
+  clearDecodeError();
+  
+  try {
+    const response = await postData(`${apiUrl}/api/secure/log_user`, { ...formData });
+    
+    if (response?.success) {
+      toast.success(response?.message);
+      localStorage.setItem('userToken', JSON.stringify(response.data));
 
-  const handleSignIn = (e) => {
-    e.preventDefault();
-    console.log("Signing in with:", { ...formData, rememberMe });
-    navigate('/Dashboard');
-  };
+      if (response?.data) {
+        const decryptResult = await decryptData({
+          encryptedData: response.data,
+          secretKey: cryptoSecret
+        });
+        
+        console.log('Decryption Result:', decryptResult);
+        
+        // Use correct action type
+        if (decryptResult.type === 'decode/decryptData/fulfilled') {
+          console.log("Decrypted Data:", decryptResult.payload);
+          setFormData({});
+          // setTimeout(() => {
+          //   navigate("/Dashboard");
+          // }, 2000);
+        } else {
+          toast.error("Failed to decrypt user data: " + decryptResult.payload);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    setFormData({});
+    toast.error(error?.response?.data?.error || "Failed to sign in");
+  } finally {
+    setIsSigningIn(false);
+  }
+};
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-400 to-blue-600 p-4">
       <div className="w-full max-w-6xl rounded-lg bg-white shadow-2xl flex overflow-hidden">
-        
         {/* Left side - Welcome Panel */}
         <div className="relative hidden w-1/2 flex-col items-center justify-center bg-gradient-to-br from-blue-400 to-blue-800 p-12 text-white md:flex">
           <img 
@@ -47,7 +91,7 @@ export default function SignIn() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Sign in
             </h1>
-          
+            
             <form onSubmit={handleSignIn} className="space-y-5">
               {loginFields.map((fieldDef) => (
                 <CustomInputField
@@ -61,7 +105,7 @@ export default function SignIn() {
                   onChange={(val) => handleInputChange(fieldDef.field, val)}
                 />
               ))}
-             
+              
               {/* Remember me checkbox */}
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -81,8 +125,9 @@ export default function SignIn() {
               <Button 
                 type="submit" 
                 className="w-full bg-blue-900 hover:bg-blue-800 py-3 text-white font-medium"
+                disabled={isSigningIn}
               >
-                Sign in
+                {isSigningIn ? "Signing in..." : "Sign in"}
               </Button>
 
               {/* Divider */}

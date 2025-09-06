@@ -141,12 +141,7 @@ const usePost = () => {
   }, []);
 
   return { 
-    data, 
-    loading, 
-    error, 
-    postData, 
-    reset,
-    cancel
+    data, loading, error, postData, reset, cancel
   };
 };
 
