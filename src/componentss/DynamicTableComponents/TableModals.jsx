@@ -17,7 +17,7 @@ const TableModals = ({  showAddModal,  showEditModal,  showDeleteModal,  headers
       />
 
       {/* Edit Modal */}
-      <EditModal
+      {/* <EditModal
         isOpen={showEditModal}
         onClose={onEditModalClose}
         headers={headers.filter((header) => header.input)}
@@ -25,7 +25,7 @@ const TableModals = ({  showAddModal,  showEditModal,  showDeleteModal,  headers
         isLoading={isLoading}
         initialData={editingItem}
         master={master}
-      />
+      /> */}
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

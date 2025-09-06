@@ -1,15 +1,13 @@
-import { useState,useContext, use } from "react";
 import { masterItems } from "../Data/Data";
 import ViewMode from "../componentss/AdditionalComponent/ViewMode";
 import CatagoryCard from "../componentss/CustomComponents/CatagoryCard";
 import ImageGridCard from "../componentss/AdditionalComponent/ItemGridCard";
 import MasterScreen from "../componentss/CustomComponents/MasterScreen";
-import { ParentContext } from "@/ParentContext/ParentContext";
-import { MasterDataContext } from "./MasterDatacontext/MasterDataContext";
+import { useAppState } from "@/states/hooks/useAppState";
 const MasterItemsGrid = () => {
   const {
     searchTerm,    setSearchTerm,    selectedCategory,    setSelectedCategory,    viewMode,    setViewMode,
-    currentScreen,    setCurrentScreen,    selectedMaster,    setSelectedMaster  } = useContext(MasterDataContext);
+    currentScreen,    setCurrentScreen,    selectedMaster,    setSelectedMaster  } = useAppState();
 
   const categories = [
     { id: "all", name: "All Items", count: masterItems.length },
@@ -57,18 +55,16 @@ const MasterItemsGrid = () => {
       count: masterItems.filter((item) => item.category === "logistics").length,
     },
   ];
-
   const filteredItems = masterItems.filter((item) => {
     const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      ?.toLowerCase()
+      .includes(searchTerm?.toLowerCase());
     const matchesCategory =
       selectedCategory === "all" || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const handleItemClick = (item) => {
-    console.log("Selected Master Item:", item);
     setSelectedMaster(item.id);
     setCurrentScreen("master");
 
@@ -82,7 +78,6 @@ const MasterItemsGrid = () => {
   };
 
 
-  console.log("masterdata",masterItems)
 
   const MainGrid = () => (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -112,8 +107,6 @@ const MasterItemsGrid = () => {
       </div>
     </div>
   );
-   console.log(currentScreen, selectedMaster);
-  // Render based on current screen
   if (currentScreen === "master"&&selectedMaster ) {
         return <MasterScreen  />;
 

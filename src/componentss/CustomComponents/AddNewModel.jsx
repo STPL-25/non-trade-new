@@ -1,24 +1,18 @@
-
-
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Save, Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CustomInputField } from "../AdditionalComponent/CustomInputField";
-import { MasterDataContext } from "@/MasterDataManagement/MasterDatacontext/MasterDataContext";
-
+import { useAppState } from "@/states/hooks/useAppState";
 const AddNewModal = ({
-  isOpen,
-  onClose,
-  headers,
-  onSave,
-  isLoading = false,
-  initialData = null,
-  isEditMode = false,
-  master = null,
-}) => {
-  const { formData, setFormData } = useContext(MasterDataContext);
-  console.log(formData,isOpen, headers, initialData)
+  isOpen,  onClose,  headers,  onSave,  isLoading = false,  initialData = null,  isEditMode = false,  master = null, }) => {
+  const { formData, setFormData } = useAppState();
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -32,13 +26,15 @@ const AddNewModal = ({
       setFormData(newFormData);
       setErrors({});
     }
-  }, []); // Removed setFormData from dependencies
+  }, []); 
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
+ 
+    const updatedFormData = {
+      ...formData,
       [field]: value,
-    }));
+    };
+    setFormData(updatedFormData);
 
     if (errors[field]) {
       setErrors((prev) => ({
@@ -73,7 +69,6 @@ const AddNewModal = ({
 
         <div className="overflow-y-auto max-h-[60vh] px-1">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {console.log(headers)}
             {headers
               .filter(
                 (header) =>
@@ -90,7 +85,8 @@ const AddNewModal = ({
                   options={header.options || []}
                   value={formData ? formData[header.field] || "" : ""}
                   onChange={(e) => {
-                    const value = e?.target?.value !== undefined ? e.target.value : e;
+                    const value =
+                      e?.target?.value !== undefined ? e.target.value : e;
                     handleInputChange(header.field, value);
                   }}
                   error={errors[header.field]}

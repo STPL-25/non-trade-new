@@ -1,34 +1,65 @@
-import React, { useState,useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignUpFields } from "../Data/SignUpData";
 import stplimage from "../assets/stpllogo.png";
 import { CustomInputField } from "@/componentss/AdditionalComponent/CustomInputField";
-import { ParentContext } from "@/ParentContext/ParentContext";
+import { useAppState } from "@/states/hooks/useAppState";
+import { useEffect } from "react";
+import axios from "axios";
 export default function SignUp() {
   const navigate = useNavigate();
-  // const [formData, setFormData] = useState({});
-  const {formData={}, setFormData} = useContext(ParentContext);
-  const signUpFields = useSignUpFields(formData);
+  const signUpFields = useSignUpFields();
+  const { formData, setFormData } = useAppState(); 
+
+
+// useEffect(() => {
+//   const fetchBasicData = async () => {
+//     try {
+//       const axiosConfig = {
+//           auth: {
+//             username: config.username,
+//             password: config.password
+//           }
+//         };
+
+//       const response = await axios.post(`${config.apiUrl}/api/common_basic_details`, formData, axiosConfig);
+//       const basicData = response.data;
+//       const { companies, divisions, branches, departments } = basicData.data;
+//       setCompanyDetails(companies);
+//       setDivDetails(divisions);
+//       setBranchDetails(branches);
+//       setDeptDetails(departments);
+//     } catch (error) {
+//       console.error("Error fetching basic data:", error);
+//       console.error("Error response:", error.response?.data);
+//       console.error("Error status:", error.response?.status);
+//     } 
+//   };
+  
+//     fetchBasicData();
+  
+// }, []); 
+
 
   const handleInputChange = (field, value) => {
-    console.log(`Field: ${field}, Value:`, value); // Better logging
 
     const fieldDef = signUpFields.find((f) => f.field === field);
+    
     if (fieldDef && fieldDef.type === "select" && typeof value === "string") {
       const selectedOption = fieldDef.options.find((opt) => opt.value == value);
-      setFormData((prev) => ({
-        ...prev,
+      const updatedFormData = {
+        ...formData,
         [field]: selectedOption,
-      }));
+      };
+      setFormData(updatedFormData);
     } else {
-      setFormData((prev) => ({
-        ...prev,
+      const updatedFormData = {
+        ...formData,
         [field]: value,
-      }));
+      };
+      setFormData(updatedFormData);
     }
   };
-
   console.log(formData);
   const handleSubmit = (e) => {
     navigate("/");

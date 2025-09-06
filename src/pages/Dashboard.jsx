@@ -1,13 +1,13 @@
 import { useState, useContext, useEffect, Suspense, lazy } from "react";
 import Header from "../componentss/DashBoardComponents/Header";
 import Sidebar from "../componentss/DashBoardComponents/SideBar";
-import { ParentContext } from "../ParentContext/ParentContext";
 import { sectionComponents } from "../ComponentDatas/ComponentDatas";
 import Loading from "../componentss/AdditionalComponent/Loading";
 import ErrorMessage from "../componentss/AdditionalComponent/ErrorMessage";
+import { useAppState } from "@/states/hooks/useAppState";
 // import { SidebarProvider, Sidebar } from '@/components/ui/sidebar'
 const Dashboard = () => {
-  const { sidebarOpen,     setSidebarOpen,     activeItem,     sidebarWidth,     isCollapsed ,isFullscreen  } = useContext(ParentContext);
+  const { sidebarOpen,     setSidebarOpen,     activeItem,     sidebarWidth,     isCollapsed ,isFullscreen  } = useAppState();
 
   const [isMobile, setIsMobile] = useState(false);
 

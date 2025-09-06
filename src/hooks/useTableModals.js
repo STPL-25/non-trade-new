@@ -1,11 +1,11 @@
 import { useState,useContext } from "react";
-import { MasterDataContext } from "@/MasterDataManagement/MasterDatacontext/MasterDataContext";
+import { useAppState } from "@/states/hooks/useAppState";
 export const useTableModals = () => {
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const {setFormData} = useContext(MasterDataContext);
+  const {setFormData} = useAppState();
   // Item states
   const [editingItem, setEditingItem] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);

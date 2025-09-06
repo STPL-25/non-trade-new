@@ -1,12 +1,5 @@
 import { lazy } from "react";
-import { MasterDataProvider } from "@/MasterDataManagement/MasterDatacontext/MasterDataContext";
-const withContextProvider = (Component) => {
-    return (props) => (
-        <MasterDataProvider>
-            <Component {...props} />
-        </MasterDataProvider>
-    );
-};
+
 
 const MasterComponents=lazy(() => import("../MasterDataManagement/MasterDataManagement"));
 const PurchaseRequisitionForm = lazy(() => import("../MasterDataManagement/PurchaseRequisitionForm"));
@@ -17,7 +10,7 @@ const HodApproval=lazy(()=>import("../MasterDataManagement/PurchaseReqHeadApprov
 const sectionComponents = {
     "PurchaseApproval": PurchaseApproval,
     "PurRequisitionForm": PurchaseRequisitionForm,
-    "masters": withContextProvider(MasterComponents),
+    "masters": MasterComponents,
     "PurReqAuthorization" : PurReqAuthorization,
     "HodApproval"  :HodApproval,
 };

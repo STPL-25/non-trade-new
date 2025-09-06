@@ -8,7 +8,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ParentContext } from "@/ParentContext/ParentContext";
 import { CustomInputField } from "../AdditionalComponent/CustomInputField";
 
 const EditModal = ({
@@ -24,7 +23,6 @@ const EditModal = ({
 }) => {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
-  const { companyDetails, divDetails } = useContext(ParentContext);
 
   useEffect(() => {
     if (isOpen) {

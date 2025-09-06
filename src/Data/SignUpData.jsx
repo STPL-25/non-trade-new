@@ -1,8 +1,7 @@
-import { useContext, useMemo } from "react";
-import { ParentContext } from "@/ParentContext/ParentContext";
-
+import {  useMemo } from "react";
+import { useAppState } from "@/states/hooks/useAppState";
 const useSignUpFields = () => {
-  const { companyDetails, divDetails, branchDetails ,deptDetails,setDeptDetails,formData} = useContext(ParentContext);
+  const { companyDetails, divDetails, branchDetails ,deptDetails,setDeptDetails,formData} = useAppState();
   console.log(companyDetails, divDetails, branchDetails, formData);
   
   return useMemo(

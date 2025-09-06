@@ -1,6 +1,5 @@
 
 
-import { useContext } from "react";
 import {
   CalendarDays,
   Plus,
@@ -8,9 +7,8 @@ import {
   Eye,
 
 } from "lucide-react";
-import { ParentContext } from "@/ParentContext/ParentContext";
 
-
+import { useAppState } from "@/states/hooks/useAppState";
 const reasons = [
   "Equipment Replacement",
   "New Equipment Purchase",
@@ -64,7 +62,7 @@ const itemFields = [
 ];
 
 const useBasicInfoFields = () => {
-  const { companyDetails,divDetails ,branchDetails} = useContext(ParentContext);
+  const { companyDetails,divDetails ,branchDetails} = useAppState();
 
 
   return [

@@ -1,21 +1,54 @@
 import DynamicTable from "./DynamicTables";
-import { ParentContext } from "../../ParentContext/ParentContext";
-import { MasterDataContext } from "@/MasterDataManagement/MasterDatacontext/MasterDataContext";
-import { useContext } from "react";
-
+import { useAppState } from "@/states/hooks/useAppState";
+import { useMasterDataFields } from "@/Data/useMasterDataFields";
 import useFetch from "@/hooks/useFetchHook";
+
 const MasterScreen = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const {selectedMaster,setCurrentScreen,fields} = useContext(MasterDataContext);
+  const { selectedMaster, setCurrentScreen } = useAppState();
+
+  // Add error handling for the hook
+  const masterDataResult = useMasterDataFields();
+  const fields = masterDataResult?.fields || {};
+
 
   
-  console.log("fields", selectedMaster);
-  const headerData = fields[selectedMaster] || [];
-  const {data: datas,loading: loading, error: error, } = useFetch(`${apiUrl}/api/common_master/${selectedMaster}`);
+  // Safe access to prevent the error
+  const headerData = selectedMaster ? (fields[selectedMaster] || []) : [];
+
+  const { data: datas, loading, error } = useFetch(
+    selectedMaster ? `${apiUrl}/api/common_master/${selectedMaster}` : null
+  );
+
+  // Add loading/error states
+  if (!selectedMaster) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-lg text-gray-600">Please select a master to view</div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-lg text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center">
+        <div className="text-lg text-red-600">Error: {error.message}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <DynamicTable
-        headers={headerData || []}
+        headers={headerData}
         data={datas?.data || []}
         title={selectedMaster?.replace(/([a-z])([A-Z])/g, "$1 $2")}
         master={selectedMaster}

@@ -1,6 +1,7 @@
 
-import { useContext, useMemo } from "react";
-import { ParentContext } from "@/ParentContext/ParentContext";
+
+import { useAppState } from "@/states/hooks/useAppState";
+import { useMemo } from "react";
 import { 
   Building, MapPin, FileCheck, IndianRupee, Package, FolderOpen, 
   Receipt, CreditCard, Calendar, Truck, Hash, PiggyBank, UserPlus, 
@@ -34,7 +35,8 @@ const masterItems = [
   { icon: <PiggyBank className="w-5 h-5" />, name: "Dept Budget", category: "finance", color: "bg-emerald-600", id: "dept_budget" },
 ];
 
-const useCompanyMasterFields = (formData) => {
+const useCompanyMasterFields = () => {
+  const {formData} = useAppState();
   return useMemo(
     () => [
       { field: "com_sno", label: "S.No", require: false, view: true, type: 'text', input: false },
@@ -63,7 +65,7 @@ const useCompanyMasterFields = (formData) => {
 };
 
 const useDivisionMasterFields = (formData) => {
-  const { companyDetails } = useContext(ParentContext);
+  const { companyDetails } = useAppState();
   
   return useMemo(
     () => [
@@ -81,7 +83,7 @@ const useDivisionMasterFields = (formData) => {
 };
 
 const useBranchMasterFields = (formData) => {
-  const { companyDetails, divDetails } = useContext(ParentContext);
+  const { companyDetails, divDetails } = useAppState();
   
   return useMemo(
     () => [
@@ -144,7 +146,7 @@ const useGSTMasterFields = (formData) => {
   );
 };
 const useDeptMasterFields = (formData) => {
-  const { companyDetails, divDetails, branchDetails } = useContext(ParentContext);
+  const { companyDetails, divDetails, branchDetails } = useAppState();
 
   return useMemo(
     () => [
